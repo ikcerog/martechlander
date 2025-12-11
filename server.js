@@ -1,98 +1,94 @@
 // server.js
-// This file runs your secure backend server.
 
 const express = require('express');
+const bodyParser = require('body-parser');
 const path = require('path');
-// Import dotenv to load environment variables from the .env file
+const { GoogleGenAI } = require("@google/genai");
+
+// Load environment variables locally (Render ignores this but it's good for local testing)
 require('dotenv').config(); 
-// Import the Google GenAI SDK
-const { GoogleGenAI } = require('@google/genai');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-// --- API KEY INITIALIZATION ---
-// The Gemini client securely reads the GEMINI_API_KEY from process.env
-// The dotenv package made this key available from your .env file.
-const ai = new GoogleGenAI(process.env.GEMINI_API_KEY);
+// --- CRITICAL FIX FOR RENDER DEPLOYMENT ---
+// The API key is now explicitly passed to the GoogleGenAI constructor,
+// ensuring it works on Render (via environment variable) and locally (via .env file).
+const apiKey = process.env.GEMINI_API_KEY;
+const ai = new GoogleGenAI({ apiKey: apiKey });
+// ------------------------------------------
 
-// --- MIDDLEWARE SETUP ---
-// 1. Serve static files (your index.html, CSS, JS) from the current directory
-app.use(express.static(path.join(__dirname, '.')));
-// 2. Middleware to parse incoming JSON bodies (to read htmlContent from the frontend)
-app.use(express.json()); 
+// Middleware setup
+app.use(bodyParser.json({ limit: '50mb' })); // Increased limit for the large HTML content
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.static(path.join(__dirname, 'public'))); // If you were using a public folder
 
-// --- SECURE AI PROXY ENDPOINT ---
-// This endpoint receives the dashboard's HTML content from the browser
-// and securely forwards it to the Gemini API.
+// 1. Serve the main HTML file
+app.get('/', (req, res) => {
+    // __dirname is the current directory of server.js
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+
+// 2. AI Summary Endpoint
 app.post('/api/summarize-news', async (req, res) => {
-    
-    // Check if the API key was loaded (for debugging)
-    if (!process.env.GEMINI_API_KEY) {
-        return res.status(500).json({ 
-            error: "Server configuration error: GEMINI_API_KEY is not set in the .env file." 
-        });
+    const htmlContent = req.body.htmlContent;
+
+    if (!htmlContent) {
+        return res.status(400).json({ error: 'Missing HTML content in request body.' });
     }
 
+    // --- PROMPT ENGINEERING ---
+    // The key part of this function. We instruct Gemini to analyze the scraped content.
+
+    const modelName = "gemini-2.5-flash"; // Fast and capable model for text analysis
+    const inputPrompt = `
+        You are a senior strategic analyst specializing in AdTech, Marketing, and Enterprise Technology.
+        Your task is to analyze the following HTML content, which contains recent news articles from various industry feeds.
+
+        1. **SCAN** the provided HTML content for all titles, sources, and descriptions within the '.news-card' elements.
+        2. **IGNORE** all hidden elements or administrative content (like 'Hide Forever' buttons).
+        3. **GENERATE** a strategic summary in Markdown format that is ready to be directly displayed in a dashboard panel.
+
+        Your output MUST be structured using Markdown headings and lists, focusing on actionable insights:
+
+        ## 📰 Core Trends & Market Focus
+        * **[Trend 1/Topic]**: Briefly describe the key theme (e.g., "AI Regulation").
+        * **[Trend 2/Topic]**: Briefly describe the key theme (e.g., "Retail Media Expansion").
+        * ... (List 3-5 major recurring themes)
+
+        ## 💡 Strategic Takeaways for AdTech Leadership
+        * **For Branding & Campaigns**: What should leadership be doing right now based on the news?
+        * **For Ad Technology**: What specific technology area requires immediate investment or planning?
+        * **For Enterprise Tech/FinTech**: What is the key market shift that requires a business response?
+
+        ## 📉 Potential Risks & Blindspots
+        * [Risk 1]: A critical risk emerging from the news (e.g., privacy changes, economic downturn, competitor move).
+
+        ---
+        HTML Content to Analyze:
+        ---
+        ${htmlContent}
+    `;
+    
     try {
-        // Extract the HTML content sent from the frontend
-        const { htmlContent } = req.body;
-        
-        if (!htmlContent) {
-            return res.status(400).send({ error: "Missing HTML content in the request body." });
-        }
-
-        // The carefully crafted prompt, instructing the AI on how to analyze the HTML
-        const prompt = `
-            Analyze the following HTML source code from a personalized news dashboard.
-            The news data is inside elements with class 'news-card', focusing on the <h4> (Headline)
-            and the source span (e.g., Source: [Name]).
-
-            Your role is a Senior Digital Strategy Analyst. Ignore all JavaScript, CSS, and structural HTML.
-
-            Provide the required analysis in the exact two sections below:
-
-            A. Executive Summary: Core Market Themes
-            Provide a concise, three-sentence paragraph summarizing the overarching themes:
-            - Sentence 1: Identify the main technological or regulatory driver.
-            - Sentence 2: Describe the resulting major business challenge or opportunity.
-            - Sentence 3: Provide a clear strategic outlook or prediction for the next 6 months.
-
-            B. Strategic Recommendations for Next Week
-            Provide two distinct strategic recommendations for an e-commerce brand's marketing leadership.
-            1. Recommendation 1 (Urgent Focus): 
-               - Actionable Advice: The critical, time-sensitive action the brand must take next week.
-               - Evidence: Cite the exact Headline and Source from one specific news card that supports this focus.
-            2. Recommendation 2 (Long-Term Focus):
-               - Actionable Advice: The foundational preparation or long-term investment the brand should initiate.
-               - Evidence: Cite the exact Headline and Source from one specific news card that supports this investment.
-            
-            ---
-            HTML to analyze:
-            ${htmlContent}
-        `;
-
-        // Securely call the Gemini API
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: [prompt],
-            // Optional: Adjust temperature for more creative/less creative summaries
-            // config: { temperature: 0.2 }, 
+            model: modelName,
+            contents: inputPrompt,
         });
 
-        // Send the AI's clean text response back to the browser
-        res.json({ summary: response.text });
+        // The response text is the summary, structured by the prompt.
+        const summary = response.text;
 
+        res.json({ summary: summary });
     } catch (error) {
-        console.error("Critical Gemini API or Server Error:", error);
-        // Send a generic error message to the client, but log the detail on the server
-        res.status(500).json({ error: "Failed to generate AI summary. Check the server console for the technical error." });
+        console.error("Gemini API Error:", error);
+        res.status(500).json({ error: 'Failed to generate AI summary. Check server logs.' });
     }
 });
 
-// --- START THE SERVER ---
+
+// Start the server
 app.listen(port, () => {
-    console.log(`\n🎉 Dashboard server running securely at http://localhost:${port}`);
-    console.log('Ensure you have run "npm install express @google/genai dotenv" first.');
-    console.log('The Gemini API key is securely loaded from your .env file.');
+    console.log(`Server running on port ${port}`);
 });
