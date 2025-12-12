@@ -493,7 +493,6 @@
     const CACHE_TTL_HOURS = 4; // Must match server.js
     const RSS_TO_JSON_PROXY_BASE = 'https://api.rss2json.com/v1/api.json?rss_url=';
     let HIDDEN_LINKS = new Set();
-    // Removed feedsLoadedSuccessfully as it's no longer used for the AI check
     
     const EDITORIAL_FEEDS = [
         { id: 'core-marketing-feed', url: 'https://www.marketingdive.com/feeds/news', source: 'Marketing Dive' },
@@ -698,12 +697,7 @@
             const feedsContainer = document.getElementById('core-marketing-feed').parentElement;
             const htmlContent = feedsContainer ? feedsContainer.outerHTML : ''; 
             
-            // --- REMOVED THE BLOCKING CONTENT CHECK ---
-            if (htmlContent.length < 50) { // Simple safety check for almost empty content
-                 summaryDiv.innerHTML = `<p style="color: var(--hide-color);">**Error: Feeds appear entirely empty.**<br>Attempting to continue analysis...</p>`;
-            }
-            // --- END REMOVED CHECK ---
-
+            // --- AGGRESSIVE STABILITY: No client-side content checks whatsoever. ---
 
             summaryDiv.innerHTML = `
                 <div class="ai-cache-info">Contacting AI server...</div>
@@ -719,7 +713,13 @@
             const data = await response.json();
             
             if (response.status !== 200 || data.error) {
-                summaryDiv.innerHTML = `<p style="color: var(--hide-color);">Error generating summary: ${data.error || 'Unknown server error.'}</p>`;
+                // If the error message is the specific one, provide better context.
+                if (data.error && data.error.includes("No clean news content found to summarize")) {
+                    summaryDiv.innerHTML = `<p style="color: var(--hide-color);">**Error: Server-side scraping failed.**<br>The server (using Cheerio) received the HTML but couldn't find any news cards (class \`.news-card\`). Check your server logs/deployment status.</p>`;
+                } else {
+                    summaryDiv.innerHTML = `<p style="color: var(--hide-color);">Error generating summary: ${data.error || 'Unknown server error.'}</p>`;
+                }
+                
                 console.error("AI Proxy Error:", data.error || 'Unknown server error.');
                 
                 // Display the explicit Gemini 503 error message if available
@@ -763,8 +763,6 @@
         const fetchEditorialPromises = EDITORIAL_FEEDS.map(feed => fetchAndRenderFeed(feed.url, feed.id, feed.source, false));
         await Promise.all(fetchEditorialPromises);
         
-        // Removed the feedsLoadedSuccessfully flag manipulation
-
         // Trigger AI Summary after the main editorial feeds are loaded (delayed for stability)
         setTimeout(generateAISummary, 1500); 
 
