@@ -1,23 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en" data-theme="light"> <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AdTech Strategy Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-rss/4.3.0/jquery.rss.min.js"></script> 
     <style>
+        /* --- 1. CORE STYLING & CSS VARIABLES (Dark Mode Setup) --- */
+        :root {
+            /* Light Theme Defaults */
+            --color-bg: #f4f7f9;
+            --color-text: #333;
+            --color-header-bg: #007bff;
+            --color-header-text: white;
+            --color-card-bg: white;
+            --color-card-border: #e0e0e0;
+            --color-primary: #007bff;
+            --color-secondary: #0056b3;
+            --color-ai-bg: #fff3cd; /* Light warning color */
+            --color-ai-text: #856404;
+        }
+
+        /* Dark Mode Override */
+        html[data-theme="dark"] {
+            --color-bg: #121212;
+            --color-text: #e0e0e0;
+            --color-header-bg: #1f1f1f;
+            --color-header-text: #e0e0e0;
+            --color-card-bg: #2e2e2e;
+            --color-card-border: #444;
+            --color-primary: #6daaf7;
+            --color-secondary: #a0c2ed;
+            --color-ai-bg: #40320a; /* Darker warning color */
+            --color-ai-text: #ffecb5;
+        }
+
+        /* --- 2. LAYOUT & ELEMENT STYLING --- */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f7f9;
-            color: #333;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            transition: background-color 0.3s, color 0.3s;
         }
         header {
-            background-color: #007bff;
-            color: white;
+            background-color: var(--color-header-bg);
+            color: var(--color-header-text);
             padding: 20px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
         main {
             padding: 20px;
@@ -28,14 +61,14 @@
             display: flex;
             gap: 10px;
             padding: 10px 0;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid var(--color-card-border);
             margin-bottom: 20px;
             overflow-x: auto;
         }
         #feed-nav button {
-            background-color: #fff;
-            color: #007bff;
-            border: 1px solid #007bff;
+            background-color: var(--color-card-bg);
+            color: var(--color-primary);
+            border: 1px solid var(--color-primary);
             padding: 8px 15px;
             cursor: pointer;
             border-radius: 4px;
@@ -43,49 +76,54 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            transition: background-color 0.2s, color 0.2s;
         }
         #feed-nav button:hover {
-            background-color: #e0f0ff;
+            background-color: var(--color-primary);
+            color: var(--color-header-text);
         }
         .nav-icon {
             font-size: 1.2em;
         }
         .feed-section {
-            background-color: white;
+            background-color: var(--color-card-bg);
             padding: 20px;
             margin-bottom: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
         .news-card {
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--color-card-border);
             padding: 15px;
             margin-bottom: 10px;
             border-radius: 6px;
             transition: box-shadow 0.3s;
+            background-color: var(--color-card-bg);
         }
         .news-card:hover {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .news-card h3 {
             margin-top: 0;
-            color: #0056b3;
+            color: var(--color-secondary);
         }
         .news-card a {
             text-decoration: none;
-            color: #0056b3;
+            color: var(--color-secondary);
         }
         .news-card a:hover {
             text-decoration: underline;
         }
         .summary {
             font-size: 0.9em;
-            color: #666;
+            color: var(--color-text);
+            opacity: 0.8;
             margin-top: 5px;
         }
         .source {
             font-size: 0.8em;
-            color: #999;
+            color: var(--color-text);
+            opacity: 0.6;
             margin-top: 5px;
             display: block;
         }
@@ -93,23 +131,25 @@
             color: red;
             font-weight: bold;
         }
+
         /* AI Summary Specific Styling */
         #ai-insight-panel {
-            background-color: #fff3cd; /* Light warning color */
-            border: 1px solid #ffecb5;
+            background-color: var(--color-ai-bg);
+            border: 1px solid var(--color-ai-text);
         }
         #ai-summary-content h2 {
-            color: #856404; /* Darker text for contrast */
+            color: var(--color-ai-text);
         }
         #ai-cache-info {
             font-size: 0.85em;
-            color: #856404;
+            color: var(--color-ai-text);
             margin-bottom: 10px;
             padding-bottom: 10px;
-            border-bottom: 1px dashed #ffecb5;
+            border-bottom: 1px dashed var(--color-ai-text);
         }
         #ai-cache-info button {
-            background-color: #ffc107;
+            background-color: var(--color-ai-text);
+            color: var(--color-bg);
             border: none;
             padding: 5px 10px;
             border-radius: 4px;
@@ -118,9 +158,10 @@
         }
         /* Markdown Rendering Styles */
         #ai-summary-output h2 {
-            border-bottom: 2px solid #ddd;
+            border-bottom: 2px solid var(--color-card-border);
             padding-bottom: 5px;
             margin-top: 20px;
+            color: var(--color-text);
         }
         #ai-summary-output ul {
             list-style-type: '👉 ';
@@ -130,8 +171,6 @@
             margin-bottom: 10px;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
@@ -141,124 +180,203 @@
 
     <main>
         <nav id="feed-nav">
-            <button onclick="toggleSection('ai-insight-panel', this.querySelector('span'));">
+            <button onclick="toggleSection('ai-insight-panel', this.querySelector('.nav-icon'));">
                 AI Summary <span class="nav-icon">👁️</span>
             </button>
-            <button onclick="toggleSection('main-feed', this.querySelector('span'));">
+            <button onclick="toggleSection('main-feed', this.querySelector('.nav-icon'));">
                 Main Feed <span class="nav-icon">👁️</span>
             </button>
-            </nav>
+            <button id="theme-toggle" onclick="toggleTheme()">
+                Theme: <span id="theme-label">Light</span> <span class="nav-icon">🌙</span>
+            </button>
+        </nav>
 
         <div id="ai-insight-panel" class="feed-section">
             <h2>✨ AI Strategy Summary</h2>
             <div id="ai-summary-content">
-                <p>Awaiting news articles to load, then initiating AI analysis...</p>
+                <p>Loading news articles...</p>
             </div>
         </div>
 
         <div id="main-feed" class="feed-section">
             <h2>📰 Latest Industry News</h2>
             <div id="news-container">
-                <div class="news-card">
-                    <h3><a href="https://example.com/story1">Google Announces Next-Gen Ad Platform</a></h3>
-                    <p class="summary">This is a summary of the article detailing Google's new privacy-focused, AI-driven advertising infrastructure which will roll out Q3 2026. This affects all partners.</p>
-                    <span class="source">Source: AdWeek</span>
-                    <button class="hide-button" onclick="hideCard(this.parentNode)">Hide Forever</button>
-                </div>
-                <div class="news-card">
-                    <h3><a href="https://example.com/story2">Retail Media Networks Capture 20% of Digital Spend</a></h3>
-                    <p class="summary">Major retailers like Walmart and Target are successfully monetizing first-party data, diverting budgets away from traditional social media and search.</p>
-                    <span class="source">Source: AdExchanger</span>
-                    <button class="hide-button" onclick="hideCard(this.parentNode)">Hide Forever</button>
-                </div>
-                </div>
+                <p>Loading RSS feeds...</p>
+            </div>
         </div>
 
     </main>
 
     <script>
+        // --- Configuration ---
         const AI_CACHE_KEY = 'aiSummaryCache';
-        const AI_CACHE_TTL_HOURS = 4; // Must match the value in server.js
+        const AI_CACHE_TTL_HOURS = 4; // Server-side cache TTL
+        const HIDDEN_STORIES_KEY = 'hiddenStories';
+        const THEME_KEY = 'theme';
+        
+        // RSS Feeds List
+        const RSS_FEEDS = [
+            { url: 'https://www.adexchanger.com/feed/', source: 'AdExchanger' },
+            { url: 'https://www.adweek.com/feed/', source: 'AdWeek' },
+            { url: 'https://techcrunch.com/feed/', source: 'TechCrunch' }
+        ];
 
-        // --- UI/UX Functions ---
+        // --- THEME / DARK MODE FUNCTIONS ---
+        
+        /**
+         * Applies the saved theme immediately on load to prevent flash of unstyled content.
+         */
+        (function applyInitialTheme() {
+            const savedTheme = localStorage.getItem(THEME_KEY);
+            const html = document.documentElement;
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            let theme = 'light';
+            if (savedTheme) {
+                theme = savedTheme;
+            } else if (prefersDark) {
+                theme = 'dark';
+            }
+
+            html.setAttribute('data-theme', theme);
+            document.getElementById('theme-label').textContent = theme === 'dark' ? 'Dark' : 'Light';
+            document.querySelector('#theme-toggle .nav-icon').textContent = theme === 'dark' ? '☀️' : '🌙';
+        })();
+
 
         /**
-         * Toggles the visibility of a feed section and updates the icon.
+         * Toggles between light and dark mode and saves preference.
          */
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem(THEME_KEY, newTheme);
+            document.getElementById('theme-label').textContent = newTheme === 'dark' ? 'Dark' : 'Light';
+            document.querySelector('#theme-toggle .nav-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // --- RSS FEED LOADING ---
+
+        /**
+         * Loads all configured RSS feeds using jQuery.rss and renders them.
+         */
+        async function loadRssFeeds() {
+            const container = $('#news-container');
+            container.empty(); // Clear "Loading..." message
+
+            const itemTemplates = [];
+
+            // Use a promise-based approach to load feeds sequentially (or use Promise.all for parallel)
+            for (const feedConfig of RSS_FEEDS) {
+                await new Promise((resolve, reject) => {
+                    $.getFeed({
+                        url: feedConfig.url,
+                        success: function(feed) {
+                            feed.items.forEach(item => {
+                                // Extract the summary (content, or description/summary)
+                                const summaryText = item.content || item.description || 'No summary available.';
+                                
+                                itemTemplates.push({
+                                    // Clean up text and convert to a jQuery object for easy manipulation/filtering
+                                    html: `
+                                        <div class="news-card">
+                                            <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
+                                            <p class="summary">${summaryText.substring(0, 200)}...</p>
+                                            <span class="source">Source: ${feedConfig.source}</span>
+                                            <button class="hide-button" data-link="${item.link}" onclick="hideCard(this)">Hide Forever</button>
+                                        </div>
+                                    `,
+                                    date: new Date(item.updated)
+                                });
+                            });
+                            resolve();
+                        },
+                        error: function(error) {
+                            console.error(`Error loading feed from ${feedConfig.url}:`, error);
+                            // Still resolve to allow the next feed to load
+                            container.append(`<p class="error">Could not load feed from ${feedConfig.source}.</p>`);
+                            resolve();
+                        },
+                        // Use YQL/Feed API replacement URL for cross-origin loading
+                        api: 'https://api.rss2json.com/v1/api.json?rss_url=' 
+                    });
+                });
+            }
+
+            // Sort all items by date (newest first)
+            itemTemplates.sort((a, b) => b.date - a.date);
+            
+            // Append sorted items to the container
+            itemTemplates.forEach(item => container.append(item.html));
+
+            // Now apply filters and start the AI process
+            applyHiddenFilter();
+            generateAISummary(); 
+        }
+
+        // --- UI/UX & CACHING FUNCTIONS (Unchanged from previous update) ---
+
         function toggleSection(sectionId, iconElement) {
             const section = document.getElementById(sectionId);
             if (section.style.display === 'none') {
                 section.style.display = 'block';
-                iconElement.textContent = '👁️'; // Eye icon for visible
+                iconElement.textContent = '👁️'; 
             } else {
                 section.style.display = 'none';
-                iconElement.textContent = '❌'; // X icon for hidden
+                iconElement.textContent = '❌';
             }
         }
 
-        /**
-         * Hides a specific news card permanently using LocalStorage.
-         */
-        function hideCard(cardElement) {
-            const link = cardElement.querySelector('h3 a').href;
+        function hideCard(buttonElement) {
+            const link = buttonElement.getAttribute('data-link');
+            const cardElement = buttonElement.parentNode;
+
             if (link && confirm("Hide this story permanently?")) {
-                let hiddenStories = JSON.parse(localStorage.getItem('hiddenStories') || '[]');
+                let hiddenStories = JSON.parse(localStorage.getItem(HIDDEN_STORIES_KEY) || '[]');
                 hiddenStories.push(link);
-                localStorage.setItem('hiddenStories', JSON.stringify(hiddenStories));
+                localStorage.setItem(HIDDEN_STORIES_KEY, JSON.stringify(hiddenStories));
                 cardElement.remove();
                 
-                // Since the visible content has changed, clear the AI cache
-                clearSummaryCache(false); // Don't reload, just clear cache
+                // Clear the AI cache since the input data has changed
+                clearSummaryCache(false); 
             }
         }
 
-        /**
-         * Clears the AI summary cache on the server (simulated by page reload).
-         */
         function clearSummaryCache(shouldReload = true) {
-            // NOTE: In a production app, this would be an API call to DELETE the cache file on the server.
-            // For this local/Render setup, we use a page reload to force the server to run the uncached logic.
-            
             const cacheInfo = document.getElementById('ai-cache-info');
-            cacheInfo.innerHTML = "Clearing cache and forcing new analysis. Please wait 90+ seconds...";
+            cacheInfo.innerHTML = "Clearing cache and forcing new analysis. Please wait ~90 seconds...";
             
             if (shouldReload) {
-                // The server uses the filesystem for cache, so client-side clear isn't enough.
-                // We reload to hit the server's post endpoint again.
+                // Force a full page reload to trigger a non-cached server-side analysis
                 window.location.reload(true); 
             }
         }
 
-        /**
-         * Checks LocalStorage to hide articles marked as "Hidden Forever".
-         */
         function applyHiddenFilter() {
-            const hiddenStories = JSON.parse(localStorage.getItem('hiddenStories') || '[]');
+            const hiddenStories = JSON.parse(localStorage.getItem(HIDDEN_STORIES_KEY) || '[]');
             if (hiddenStories.length === 0) return;
 
-            const newsContainer = document.getElementById('news-container');
-            const cards = newsContainer.querySelectorAll('.news-card');
+            const cards = document.querySelectorAll('#news-container .news-card');
 
             cards.forEach(card => {
-                const link = card.querySelector('h3 a').href;
+                const link = card.querySelector('.hide-button').getAttribute('data-link');
                 if (hiddenStories.includes(link)) {
                     card.style.display = 'none';
                 }
             });
         }
 
-        // --- AI Summary Logic (Updated for Caching) ---
         async function generateAISummary() {
             const summaryPanel = document.getElementById('ai-summary-content');
-            
-            // OuterHTML includes the container element and its content
             const newsContent = document.getElementById('main-feed').outerHTML; 
 
-            // Add the loading state UI with cache info placeholder
             summaryPanel.innerHTML = `
                 <div id="ai-cache-info">Contacting AI server...</div>
                 <div id="ai-summary-output">
-                    <p>Initiating AI analysis. This may take a moment while the server pre-processes the data and communicates with the Gemini API...</p>
+                    <p>Initiating AI analysis. The server is pre-processing and will take ~90 seconds if not cached...</p>
                 </div>
             `;
 
@@ -280,11 +398,8 @@
                     return;
                 }
 
-                // Apply Markdown rendering and set the summary content
-                // The marked library will convert Markdown into HTML
                 summaryOutput.innerHTML = marked.parse(data.summary);
 
-                // Handle the Cache Information Display
                 const timestamp = new Date(data.timestamp);
                 const nextRefresh = new Date(timestamp.getTime() + (AI_CACHE_TTL_HOURS * 60 * 60 * 1000));
                 const refreshTime = nextRefresh.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -297,18 +412,15 @@
                 `;
 
             } catch (error) {
-                summaryPanel.innerHTML = `<p class="error">Could not connect to AI server. Ensure your Node.js server (server.js) is running and accessible.</p>`;
+                summaryPanel.innerHTML = `<p class="error">Could not connect to AI server. Ensure your server.js is running.</p>`;
                 console.error('Fetch error:', error);
             }
         }
 
         // --- Initial Load Sequence ---
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Filter out permanently hidden stories
-            applyHiddenFilter();
-            
-            // 2. Start the AI summary process
-            generateAISummary(); 
+            // Load RSS feeds, which then calls applyHiddenFilter and generateAISummary
+            loadRssFeeds(); 
         });
     </script>
 </body>
