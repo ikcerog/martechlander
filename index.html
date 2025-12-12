@@ -493,7 +493,7 @@
     const CACHE_TTL_HOURS = 4; // Must match server.js
     const RSS_TO_JSON_PROXY_BASE = 'https://api.rss2json.com/v1/api.json?rss_url=';
     let HIDDEN_LINKS = new Set();
-    let feedsLoadedSuccessfully = false; 
+    // Removed feedsLoadedSuccessfully as it's no longer used for the AI check
     
     const EDITORIAL_FEEDS = [
         { id: 'core-marketing-feed', url: 'https://www.marketingdive.com/feeds/news', source: 'Marketing Dive' },
@@ -504,10 +504,10 @@
         { id: 'ad-tech-feed', url: 'https://adtechdaily.com/feed/', source: 'Ad Tech Daily' },
         { id: 'ad-tech-feed', url: 'https://videoweek.com/feed/', source: 'VideoWeek' },
         { id: 'ad-tech-feed', url: 'https://advertisemint.com/feed/', source: 'AdvertiseMint' },
-        // --- FIX: Replaced failing 422 feeds with known good alternatives ---
+        // --- FIXED FEEDS ---
         { id: 'fintech-new-feed', url: 'https://techcrunch.com/feed/', source: 'TechCrunch (Enterprise)' }, 
         { id: 'fintech-new-feed', url: 'https://www.zdnet.com/topic/enterprise/rss.xml', source: 'ZDNet (Enterprise)' },
-        // --- End Fix ---
+        // ---
         { id: 'tech-culture-feed', url: 'https://www.wired.com/feed/rss', source: 'Wired' }, 
     ];
     
@@ -698,11 +698,12 @@
             const feedsContainer = document.getElementById('core-marketing-feed').parentElement;
             const htmlContent = feedsContainer ? feedsContainer.outerHTML : ''; 
             
-            // CRITICAL CHECK for 'No clean news content found to summarize.'
-            if (!feedsLoadedSuccessfully || !htmlContent.includes('news-card')) {
-                 summaryDiv.innerHTML = `<p style="color: var(--hide-color);">**Error: No news content found to summarize.**<br>Feeds failed to load or returned zero items. Check the Console (F12) for detailed fetch errors.</p>`;
-                 return;
+            // --- REMOVED THE BLOCKING CONTENT CHECK ---
+            if (htmlContent.length < 50) { // Simple safety check for almost empty content
+                 summaryDiv.innerHTML = `<p style="color: var(--hide-color);">**Error: Feeds appear entirely empty.**<br>Attempting to continue analysis...</p>`;
             }
+            // --- END REMOVED CHECK ---
+
 
             summaryDiv.innerHTML = `
                 <div class="ai-cache-info">Contacting AI server...</div>
@@ -762,10 +763,7 @@
         const fetchEditorialPromises = EDITORIAL_FEEDS.map(feed => fetchAndRenderFeed(feed.url, feed.id, feed.source, false));
         await Promise.all(fetchEditorialPromises);
         
-        // Check if any news cards were rendered
-        if (document.querySelector('.news-card')) {
-             feedsLoadedSuccessfully = true;
-        }
+        // Removed the feedsLoadedSuccessfully flag manipulation
 
         // Trigger AI Summary after the main editorial feeds are loaded (delayed for stability)
         setTimeout(generateAISummary, 1500); 
