@@ -493,7 +493,7 @@
     const CACHE_TTL_HOURS = 4; // Must match server.js
     const RSS_TO_JSON_PROXY_BASE = 'https://api.rss2json.com/v1/api.json?rss_url=';
     let HIDDEN_LINKS = new Set();
-    let feedsLoadedSuccessfully = false; // New flag to track content load
+    let feedsLoadedSuccessfully = false; 
     
     const EDITORIAL_FEEDS = [
         { id: 'core-marketing-feed', url: 'https://www.marketingdive.com/feeds/news', source: 'Marketing Dive' },
@@ -504,8 +504,10 @@
         { id: 'ad-tech-feed', url: 'https://adtechdaily.com/feed/', source: 'Ad Tech Daily' },
         { id: 'ad-tech-feed', url: 'https://videoweek.com/feed/', source: 'VideoWeek' },
         { id: 'ad-tech-feed', url: 'https://advertisemint.com/feed/', source: 'AdvertiseMint' },
-        { id: 'fintech-new-feed', url: 'https://www.ciodive.com/feed/', source: 'CIO Dive' },
-        { id: 'fintech-new-feed', url: 'https://www.bankingdive.com/topic/fintech/feed/', source: 'Banking Dive' },
+        // --- FIX: Replaced failing 422 feeds with known good alternatives ---
+        { id: 'fintech-new-feed', url: 'https://techcrunch.com/feed/', source: 'TechCrunch (Enterprise)' }, 
+        { id: 'fintech-new-feed', url: 'https://www.zdnet.com/topic/enterprise/rss.xml', source: 'ZDNet (Enterprise)' },
+        // --- End Fix ---
         { id: 'tech-culture-feed', url: 'https://www.wired.com/feed/rss', source: 'Wired' }, 
     ];
     
