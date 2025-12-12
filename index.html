@@ -3,46 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MarTech Intelligence Dashboard</title>
+    <title>Personalized AdTech & Branding Hub</title>
+    
     <style>
+        /* --- CSS Styling and Variables --- */
         :root {
-            /* Light Mode (Default) */
-            --background-color: #f4f7f6;
+            /* Light Theme Defaults */
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --secondary-accent-1: #2ecc71; 
+            --secondary-accent-2: #e67e22; 
+            --secondary-accent-3: #16a085; 
+            --secondary-accent-4: #f39c12; 
+            --background-color: #ecf0f1;
             --card-background: #ffffff;
-            --text-color: #333333;
-            --secondary-text-color: #666666;
-            --accent-color: #007bff;
-            --accent-hover: #0056b3;
-            --border-color: #e0e0e0;
-            --hide-color: #dc3545;
+            --text-color: #34495e;
+            --secondary-text-color: #7f8c8d;
+            --border-color: #bdc3c7;
+            --hide-color: #e74c3c;
         }
 
-        /* Dark Mode */
+        /* Dark Mode Variables */
         body.dark-mode {
-            --background-color: #1e1e1e;
-            --card-background: #2d2d2d;
-            --text-color: #e0e0e0;
-            --secondary-text-color: #aaaaaa;
-            --accent-color: #1e90ff;
-            --accent-hover: #007ac1;
-            --border-color: #3a3a3a;
-            --hide-color: #ff6b6b;
+            --primary-color: #9b59b6;
+            --accent-color: #3498db;
+            --secondary-accent-1: #1abc9c;
+            --secondary-accent-2: #d35400;
+            --secondary-accent-3: #1abc9c;
+            --secondary-accent-4: #e67e22;
+            --background-color: #2c3e50;
+            --card-background: #34495e;
+            --text-color: #ecf0f1;
+            --secondary-text-color: #bdc3c7;
+            --border-color: #49627a;
+            --hide-color: #c0392b;
         }
 
-        /* Midnight Mode */
+        /* Midnight Mode Variables */
         body.midnight-mode {
-            --background-color: #000000;
-            --card-background: #0d0d0d;
-            --text-color: #c9c9c9;
-            --secondary-text-color: #888888;
-            --accent-color: #00bcd4;
-            --accent-hover: #00a0a0;
-            --border-color: #1a1a1a;
-            --hide-color: #ff4500;
+            --primary-color: #0d1a26;
+            --accent-color: #5d9cec;
+            --secondary-accent-1: #48c9b0; 
+            --secondary-accent-2: #f5b041; 
+            --secondary-accent-3: #45b39d; 
+            --secondary-accent-4: #f7dc6f; 
+            --background-color: #010409;
+            --card-background: #0d1117;
+            --text-color: #c9d1d9;
+            --secondary-text-color: #8b949e;
+            --border-color: #30363d;
+            --hide-color: #ff7b72;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: var(--background-color);
@@ -50,437 +64,400 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
-        /* --- Header and Controls --- */
+        /* Header Styling */
         header {
-            background-color: var(--card-background);
-            border-bottom: 1px solid var(--border-color);
-            padding: 15px 30px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        /* Header Max-Width Container */
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
-        header h1 {
-            margin: 0;
-            font-size: 1.5em;
-            color: var(--accent-color);
-        }
+        header h1 { margin: 0; font-size: 1.8em; }
 
-        .controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .control-group button {
-            padding: 8px 15px;
-            border: 1px solid var(--border-color);
-            background-color: var(--card-background);
-            color: var(--text-color);
-            cursor: pointer;
-            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+        /* Search Input */
+        #search-input {
+            width: 100%;
+            padding: 10px;
+            border: none;
             border-radius: 4px;
+            font-size: 1em;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--primary-color);
         }
 
-        .control-group button:hover {
-            background-color: var(--accent-hover);
+        /* Control Buttons Container */
+        .controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        /* Theme, View, and Filter Buttons */
+        .control-button {
+            padding: 8px 15px;
+            border: 1px solid white;
+            background-color: transparent;
             color: white;
-            border-color: var(--accent-hover);
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.9em;
+            transition: background-color 0.2s, opacity 0.2s, border-color 0.2s;
+        }
+
+        .control-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
         
-        .control-group button.active {
+        /* Highlight active filter button */
+        .control-button.active {
+            background-color: white;
+            color: var(--primary-color);
+            border-color: white;
+        }
+        
+        body.dark-mode .control-button.active, body.midnight-mode .control-button.active {
             background-color: var(--accent-color);
             color: white;
             border-color: var(--accent-color);
         }
+
         
-        #ai-panel-button.active {
-             background-color: var(--hide-color);
-             border-color: var(--hide-color);
+        /* View Toggle Specific Styling */
+        #view-toggle-row {
+            display: flex;
+            gap: 5px;
+            border-right: 1px solid rgba(255, 255, 255, 0.5);
+            padding-right: 15px;
+            margin-right: 5px;
+        }
+        .view-button.active {
+            background-color: white;
+            color: var(--primary-color);
+        }
+        body.dark-mode .view-button.active, body.midnight-mode .view-button.active {
+            background-color: var(--text-color);
+            color: var(--primary-color);
         }
 
-        #theme-toggle, #reset-hidden-button {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
         
         #reset-hidden-button {
             background-color: var(--hide-color);
+            border-color: var(--hide-color);
+        }
+        #reset-hidden-button:hover {
+            opacity: 0.8;
         }
 
-        /* --- Search Bar --- */
-        #search-input {
-            padding: 8px 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            background-color: var(--card-background);
-            color: var(--text-color);
-            width: 200px;
-            transition: border-color 0.2s;
-        }
-
-        #search-input:focus {
-            outline: none;
-            border-color: var(--accent-color);
-        }
-
-        /* --- Main Content Layout --- */
-        .container {
-            padding: 20px 30px;
-            max-width: 1400px;
-            margin: auto;
-        }
-
-        /* --- AI Insight Panel (Hidden by Default) --- */
-        #ai-insight-panel {
-            background-color: var(--card-background);
-            border: 1px solid var(--border-color);
+        /* Feed Sections */
+        .feed-section {
             padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            transition: max-height 0.5s ease-in-out, opacity 0.3s ease-in-out;
-            max-height: 0;
+            max-width: 1400px;
+            margin: 0 auto;
+            transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
             overflow: hidden;
-            opacity: 0;
-        }
-
-        #ai-insight-panel.visible {
-            max-height: 2000px; /* Large enough to accommodate content */
-            opacity: 1;
         }
         
-        #ai-insight-panel.hidden {
+        .feed-section.hidden {
             max-height: 0;
             opacity: 0;
-        }
-
-        #ai-insight-panel h2 {
-            color: var(--accent-color);
+            padding-top: 0;
+            padding-bottom: 0;
             margin-top: 0;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-        
-        #ai-summary-content {
-            white-space: pre-wrap; /* Preserve formatting from the AI response */
-            font-size: 0.95em;
-            line-height: 1.6;
-        }
-        
-        .ai-cache-info {
-            font-size: 0.8em;
-            color: var(--secondary-text-color);
-            padding: 10px;
-            border: 1px dashed var(--border-color);
-            border-radius: 4px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .ai-cache-info button {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-left: 10px;
+            margin-bottom: 0;
         }
 
-        /* --- Section and Grid Layout --- */
         .feed-section h2 {
-            border-bottom: 2px solid var(--border-color);
+            border-bottom: 2px solid var(--primary-color);
             padding-bottom: 5px;
             margin-top: 30px;
-            margin-bottom: 15px;
-            color: var(--text-color);
-            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-size: 1.5em;
         }
 
+        body.dark-mode .feed-section h2, body.midnight-mode .feed-section h2 {
+            border-bottom-color: var(--accent-color);
+            color: var(--text-color);
+        }
+        
+        /* Specific header colors for flair */
+        #community-pulse-feed h2 { color: var(--secondary-accent-1); }
+        #branding-advertising-feed h2 { color: var(--secondary-accent-2); }
+        /* FinTech (Enterprise Tech) and Tech Culture */
+        #fintech-new-feed h2 { color: var(--secondary-accent-3); }
+        #tech-culture-feed h2 { color: var(--secondary-accent-3); }
+        #ad-tech-feed h2 { color: var(--secondary-accent-4); }
+
+
+        /* --- VIEW CONTROLS CSS (Grid and List) --- */
+        
+        /* Default: GRID VIEW (Multi-Column) */
         .news-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
-            margin-bottom: 30px;
         }
         
+        .news-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* LIST VIEW: Overrides Grid */
+        body.list-view .feed-section:not(#community-pulse-feed) .news-grid {
+            display: flex; 
+            flex-direction: column;
+            gap: 10px; 
+        }
+        
+        body.list-view .feed-section:not(#community-pulse-feed) .news-card {
+            flex-direction: row;
+            align-items: center;
+            padding: 15px 20px;
+            width: auto; 
+        }
+        
+        body.list-view .feed-section:not(#community-pulse-feed) .news-card h4 {
+            flex-basis: 50%;
+            margin: 0;
+            font-size: 1.1em;
+            order: 1;
+        }
+        
+        body.list-view .feed-section:not(#community-pulse-feed) .news-card .description,
+        /* Hide the default card controls in List View */
+        body.list-view .feed-section:not(#community-pulse-feed) .news-card > .card-controls {
+            display: none; 
+        }
+        
+        /* Target the combined date and control container in List View */
+        body.list-view .feed-section:not(#community-pulse-feed) .news-card .date-and-controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end; 
+            gap: 20px;
+            flex-grow: 1; 
+            order: 2;
+        }
+
+        /* Adjustments for elements inside the new container */
+        body.list-view .feed-section:not(#community-pulse-feed) .news-card .date {
+            border-top: none;
+            padding-top: 0;
+            margin: 0;
+            font-size: 0.9em;
+            flex-shrink: 0; 
+        }
+        
+        body.list-view .feed-section:not(#community-pulse-feed) .news-card .card-controls {
+            /* This is the inner .card-controls inside .date-and-controls */
+            display: flex !important; /* Override display:none from above */
+            flex-basis: auto;
+            justify-content: flex-end;
+            margin: 0;
+            flex-shrink: 0; 
+        }
+        
+        body.list-view .feed-section:not(#community-pulse-feed) .news-card .card-controls span {
+            display: none; 
+        }
+        /* --- END VIEW CONTROLS CSS --- */
+
+
+        .reddit-subsection {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            border-radius: 4px;
+        }
         .reddit-subsection h3 {
-            color: var(--accent-color);
-            margin-top: 20px;
-            margin-bottom: 10px;
+            margin: 0 0 10px 0;
             font-size: 1.2em;
+            color: var(--accent-color);
         }
-        
-        /* --- News Card Styling (Grid View) --- */
+
+
         .news-card {
             background-color: var(--card-background);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s, opacity 0.3s;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+        
+        .news-card.hidden-tile {
+            display: none !important;
         }
 
         .news-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .news-card h4 {
-            margin-top: 0;
-            font-size: 1.1em;
-            line-height: 1.4;
-            margin-bottom: 10px;
-        }
-
-        .news-card h4 a {
-            color: var(--text-color);
-            text-decoration: none;
-        }
-
-        .news-card h4 a:hover {
-            color: var(--accent-color);
-        }
-
-        .news-card .description {
-            color: var(--secondary-text-color);
-            font-size: 0.9em;
-            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
         
-        .news-card .date {
-            font-size: 0.8em;
-            color: var(--secondary-text-color);
-            margin: 0;
-        }
-
+        /* Default Grid View Controls */
         .card-controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 5px; 
         }
         
-        .news-source {
-            font-size: 0.75em;
-            font-weight: bold;
-            color: var(--accent-color);
+        .card-controls span {
+            font-size: 0.7em;
+            color: var(--secondary-text-color);
+            opacity: 0.8;
         }
-
+        
         .card-controls button {
-            background-color: var(--hide-color);
-            color: white;
+            background: none;
             border: none;
-            padding: 4px 8px;
-            font-size: 0.75em;
-            border-radius: 4px;
+            color: var(--hide-color);
+            font-size: 0.8em;
             cursor: pointer;
-            transition: background-color 0.2s;
+            padding: 0;
+            opacity: 0.7;
+            transition: opacity 0.2s;
         }
-
+        
         .card-controls button:hover {
-            background-color: #a02030;
-        }
-        
-        .hidden-tile {
-            opacity: 0.2;
-            pointer-events: none;
-            order: 1000; /* Push hidden items to the end */
-            display: none; /* Ensure they are gone completely */
-        }
-        
-        .date-and-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: auto; /* Push to the bottom */
-        }
-        
-        /* --- List View Specific Styles --- */
-        body.list-view .news-grid {
-            display: block;
+            opacity: 1;
         }
 
-        body.list-view .news-card {
-            display: grid;
-            grid-template-columns: 1fr 3fr 150px 100px;
-            gap: 20px;
-            align-items: center;
-            padding: 15px 20px;
-            margin-bottom: 10px;
-        }
-        
-        body.list-view .news-card .card-controls {
-            justify-content: flex-end;
-            margin: 0;
-        }
 
-        body.list-view .news-card h4 {
-            margin: 0;
-        }
+        .news-card h4 { margin: 0 0 10px 0; font-size: 1.15em; line-height: 1.4; }
+        .news-card h4 a { color: var(--accent-color); text-decoration: none; transition: color 0.2s; }
+        .news-card h4 a:hover { color: var(--primary-color); }
+        body.dark-mode .news-card h4 a:hover, body.midnight-mode .news-card h4 a:hover { color: var(--text-color); }
 
-        body.list-view .news-card .description {
-            display: none; /* Hide description in list view */
-        }
-        
-        body.list-view .news-card .news-source {
-            grid-column: 1;
+        .news-card .description {
             font-size: 0.9em;
+            color: var(--secondary-text-color);
+            line-height: 1.5;
+            margin-top: 0;
+            flex-grow: 1; 
         }
         
-        body.list-view .news-card h4 {
-            grid-column: 2;
+        /* AI Summary Panel Specific Styling */
+        #ai-insight-panel {
+            background-color: var(--card-background);
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
         }
-        
-        body.list-view .news-card .date-and-controls {
-            grid-column: 3;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        
-        body.list-view .news-card .card-controls {
-            grid-column: 4;
-        }
-        
-        body.list-view .news-card .date-and-controls .card-controls {
-            display: none; /* Hide duplicate hide button */
-        }
-
-        /* --- Responsive Design --- */
-        @media (max-width: 1000px) {
-            .news-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            }
-            
-            body.list-view .news-card {
-                grid-template-columns: 1fr 2fr 100px 80px;
-            }
-        }
-
-        @media (max-width: 700px) {
-            header {
-                flex-direction: column;
-                padding: 10px;
-            }
-            header h1 {
-                margin-bottom: 10px;
-            }
-            .controls {
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            .container {
-                padding: 10px;
-            }
-            .news-grid {
-                grid-template-columns: 1fr;
-            }
-            body.list-view .news-card {
-                grid-template-columns: 1fr;
-                padding: 15px;
-            }
-            body.list-view .news-card .news-source,
-            body.list-view .news-card h4,
-            body.list-view .news-card .date-and-controls {
-                grid-column: auto;
-            }
-            
-            body.list-view .news-card .date-and-controls .card-controls {
-                 display: flex; 
-                 margin-top: 10px;
-            }
+        #ai-summary-content {
+            padding: 10px;
+            line-height: 1.6;
+            white-space: pre-wrap; /* Ensures the AI's formatting (like newlines) is respected */
         }
     </style>
 </head>
-<body>
-
+<body class="light-mode">
     <header>
-        <h1>MarTech & AdTech Intelligence</h1>
-        <div class="controls">
-            <input type="text" id="search-input" onkeyup="filterCards()" placeholder="Filter news by keyword...">
-            
-            <div class="control-group">
-                <button id="grid-view-button" onclick="setListView('grid')">Grid View</button>
-                <button id="list-view-button" onclick="setListView('list')">List View</button>
+        <div class="header-content">
+            <div class="header-top">
+                <h1>Personalized AdTech & Branding Hub</h1>
+                <button id="theme-toggle" class="control-button">☀️ Switch to Dark Mode</button>
             </div>
             
-            <div class="control-group">
-                 <button id="ai-panel-button" onclick="toggleSectionByButton(this)" data-target="ai-insight-panel">
-                     AI Insights <span id="ai-panel-icon">❌</span>
-                 </button>
-                 <button id="theme-toggle" onclick="toggleTheme()">☀️ Switch Mode</button>
-                 <button id="reset-hidden-button" onclick="resetHiddenTiles()">Reset Hidden</button>
+            <div id="search-container">
+                <input type="text" id="search-input" placeholder="Start searching across all feeds..." onkeyup="filterCards()">
+            </div>
+            
+            <div class="controls-row">
+                <div id="view-toggle-row">
+                    <button id="grid-view-button" class="view-button control-button" onclick="setListView('grid')">Grid View</button>
+                    <button id="list-view-button" class="view-button control-button" onclick="setListView('list')">List View</button>
+                </div>
+                
+                <button id="toggle-core-marketing" class="control-button active" data-target="core-marketing-feed">Core Marketing</button>
+                <button id="toggle-branding" class="control-button active" data-target="branding-advertising-feed">Branding & Campaigns</button>
+                <button id="toggle-adtech" class="control-button active" data-target="ad-tech-feed">Ad Technology</button>
+                <button id="toggle-fintech" class="control-button active" data-target="fintech-new-feed">Enterprise Tech</button>
+                <button id="toggle-tech" class="control-button active" data-target="tech-culture-feed">Tech & Culture</button>
+                <button id="toggle-community" class="control-button active" data-target="community-pulse-feed">Community Pulse</button>
+                <button id="reset-hidden-button" class="control-button" onclick="resetHiddenTiles()">Reset Hidden Tiles</button>
             </div>
         </div>
     </header>
-
-    <div class="container">
-        
-        <div id="ai-insight-panel" class="hidden">
-            <h2>✨ AI Strategy Summary</h2>
-            <div id="ai-summary-content">
-                <p>Waiting for news feeds to load...</p>
-            </div>
+    
+    <div id="ai-insight-panel" class="feed-section">
+        <h2>✨ AI Strategy Summary</h2>
+        <div id="ai-summary-content">
+            <p>Awaiting news articles to load, then initiating AI analysis...</p>
         </div>
-
-        <div class="feed-section">
-            <h2>🚀 Core Marketing & Adtech Trends</h2>
-            
-            <div class="news-grid-master">
-                <div id="core-marketing-feed" class="feed-subsection">
-                    <div class="news-grid">Loading...</div>
-                </div>
-
-                <div id="branding-advertising-feed" class="feed-subsection">
-                    <div class="news-grid">Loading...</div>
-                </div>
-                
-                <div id="ad-tech-feed" class="feed-subsection">
-                    <div class="news-grid">Loading...</div>
-                </div>
-                
-                <div id="fintech-new-feed" class="feed-subsection">
-                    <div class="news-grid">Loading...</div>
-                </div>
-
-                <div id="tech-culture-feed" class="feed-subsection">
-                    <div class="news-grid">Loading...</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="feed-section">
-            <h2>💬 Community Pulse (Reddit)</h2>
-            <div id="community-pulse-container">
-                <p>Loading community feeds...</p>
-            </div>
-        </div>
-
     </div>
 
+
+    <div id="core-marketing-feed" class="feed-section">
+        <h2>📈 Core Marketing (Marketing Dive)</h2>
+        <div class="news-grid-container" data-feed-id="core-marketing-feed">
+            <div class="news-grid">Loading Core Marketing...</div>
+        </div>
+    </div>
+
+    <div id="branding-advertising-feed" class="feed-section">
+        <h2>⭐️ Branding & Campaigns (Adweek, AdPulp, More...)</h2>
+        <div class="news-grid-container" data-feed-id="branding-advertising-feed">
+            <div class="news-grid">Loading Branding & Campaigns...</div>
+        </div>
+    </div>
+
+    <div id="ad-tech-feed" class="feed-section">
+        <h2>⚙️ Ad Technology (AdExchanger, VideoWeek...)</h2>
+        <div class="news-grid-container" data-feed-id="ad-tech-feed">
+            <div class="news-grid">Loading Ad Technology...</div>
+        </div>
+    </div>
+
+    <div id="fintech-new-feed" class="feed-section">
+        <h2>💰 Enterprise Tech & FinTech (CIO Dive, Banking Dive)</h2>
+        <div class="news-grid-container" data-feed-id="fintech-new-feed">
+            <div class="news-grid">Loading Enterprise Tech & FinTech...</div>
+        </div>
+    </div>
+
+    <div id="tech-culture-feed" class="feed-section">
+        <h2>🌐 Tech & Culture (Wired)</h2>
+        <div class="news-grid-container" data-feed-id="tech-culture-feed">
+            <div class="news-grid">Loading Tech & Culture...</div>
+        </div>
+    </div>
+    
+    <div id="community-pulse-feed" class="feed-section">
+        <h2>🗣️ Community Pulse (Reddit Subreddits)</h2>
+        <div id="community-pulse-container">
+            </div>
+    </div>
+    
     <script>
         /* --- JavaScript for Theme Switching, Fetching, Rendering, and Controls --- */
-        
-        const CACHE_TTL_HOURS = 4; // Must match server.js
-        const RSS_TO_JSON_PROXY_BASE = 'https://api.rss2json.com/v1/api.json?rss_url=';
-        let HIDDEN_LINKS = new Set();
-        
+
         const EDITORIAL_FEEDS = [
             { id: 'core-marketing-feed', url: 'https://www.marketingdive.com/feeds/news', source: 'Marketing Dive' },
             { id: 'branding-advertising-feed', url: 'https://www.adweek.com/feed/', source: 'Adweek' }, 
@@ -490,10 +467,11 @@
             { id: 'ad-tech-feed', url: 'https://adtechdaily.com/feed/', source: 'Ad Tech Daily' },
             { id: 'ad-tech-feed', url: 'https://videoweek.com/feed/', source: 'VideoWeek' },
             { id: 'ad-tech-feed', url: 'https://advertisemint.com/feed/', source: 'AdvertiseMint' },
-            // --- FIXED FEEDS ---
-            { id: 'fintech-new-feed', url: 'https://techcrunch.com/feed/', source: 'TechCrunch (Enterprise)' }, 
-            { id: 'fintech-new-feed', url: 'https://www.zdnet.com/topic/enterprise/rss.xml', source: 'ZDNet (Enterprise)' },
-            // ---
+            
+            // --- UPDATED FINTECH SECTION: CIO Dive & Banking Dive ---
+            { id: 'fintech-new-feed', url: 'https://www.ciodive.com/feed/', source: 'CIO Dive' },
+            { id: 'fintech-new-feed', url: 'https://www.bankingdive.com/topic/fintech/feed/', source: 'Banking Dive' },
+            
             { id: 'tech-culture-feed', url: 'https://www.wired.com/feed/rss', source: 'Wired' }, 
         ];
         
@@ -504,8 +482,10 @@
             { id: 'r/fintech', url: 'https://www.reddit.com/r/Fintech.rss' },
             { id: 'r/userexperience', url: 'https://www.reddit.com/r/userexperience.rss' },
         ];
-
-
+        
+        const RSS_TO_JSON_PROXY_BASE = 'https://api.rss2json.com/v1/api.json?rss_url=';
+        let HIDDEN_LINKS = new Set();
+        
         // --- THEME LOGIC (Triple Mode) ---
         const THEMES = ['light-mode', 'dark-mode', 'midnight-mode'];
         const THEME_LABELS = {
@@ -561,7 +541,7 @@
             setListView(savedView);
         }
 
-        // --- PERSISTENCE & UTILITY LOGIC (Hide/Reset) ---
+        // --- PERSISTENCE & UTILITY LOGIC ---
         
         function loadHiddenLinks() {
             const storedLinks = localStorage.getItem('hiddenNewsLinks');
@@ -580,8 +560,6 @@
                 card.classList.add('hidden-tile');
                 HIDDEN_LINKS.add(link);
                 saveHiddenLinks();
-                // Since the visible content changed, clear the AI cache
-                clearSummaryCache(false); 
             }
         }
         
@@ -610,86 +588,60 @@
             });
         }
         
-        /**
-         * Toggles the visibility of a feed section using the data-target attribute.
-         */
-        window.toggleSectionByButton = function(button) {
+        function toggleSection(button) {
             const targetId = button.getAttribute('data-target');
-            toggleSectionById(targetId, button);
-        }
-
-        /**
-         * Toggles the visibility of any section by its ID.
-         */
-        window.toggleSectionById = function(targetId, button) {
             const section = document.getElementById(targetId);
 
             if (!section) return;
 
-            // Toggle visibility using classes for the transition
             if (section.classList.contains('hidden')) {
-                section.classList.add('visible');
+                section.style.maxHeight = '5000px'; 
                 section.classList.remove('hidden');
-                if (button) button.classList.add('active');
+                button.classList.add('active');
             } else {
                 section.classList.add('hidden');
-                section.classList.remove('visible');
-                if (button) button.classList.remove('active');
-            }
-            
-            // Handle the AI Panel icon specially
-            if (targetId === 'ai-insight-panel') {
-                const icon = document.getElementById('ai-panel-icon');
-                if (section.classList.contains('hidden')) {
-                    icon.textContent = '❌'; // Hidden icon
-                } else {
-                    icon.textContent = '👁️'; // Visible icon
-                }
+                button.classList.remove('active');
             }
         }
 
         function setupControls() {
-            // FIX: Re-add the event listener for the theme toggle button
             document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            
+            const filterButtons = document.querySelectorAll('.controls-row .control-button[data-target]');
+            filterButtons.forEach(button => {
+                button.removeEventListener('click', toggleSection); 
+                button.addEventListener('click', () => {
+                    toggleSection(button);
+                });
+            });
         }
-
 
         // --- AI SUMMARY INTEGRATION FUNCTION (Calls Server) ---
-        
-        function clearSummaryCache(shouldReload = true) {
-            // Note: In a production app, this would be an API call to DELETE the cache file on the server.
-            // For this setup, we rely on a page reload to force the server to run the uncached logic.
-            
-            const summaryDiv = document.getElementById('ai-summary-content');
-            summaryDiv.innerHTML = `
-                <div class="ai-cache-info">Clearing server cache and forcing new analysis. Please wait ~90 seconds...</div>
-                <p>Reloading page...</p>
-            `;
-            
-            if (shouldReload) {
-                window.location.reload(true); 
-            }
-        }
-        
         async function generateAISummary() {
             const summaryDiv = document.getElementById('ai-summary-content');
             
+            // SECURITY CHECK: Must be run on http://localhost:3000, not file://
             if (window.location.protocol === 'file:') {
                  summaryDiv.innerHTML = `<p><strong>Note:</strong> To use the AI Strategy Summary, you MUST run this file 
-                 via your secure Node.js server. The API endpoint is not accessible from a local <code>file://</code> URL.</p>`;
+                 via your secure Node.js server (e.g., <code>http://localhost:3000</code>). 
+                 The API endpoint is not accessible from a local <code>file://</code> URL.</p>`;
                  return;
             }
 
             try {
-                // *** CRITICAL CHANGE: Send the entire body to maximize Cheerio success ***
-                const htmlContent = document.body.outerHTML; 
-                // ***********************************************************************
-                
-                summaryDiv.innerHTML = `
-                    <div class="ai-cache-info">Contacting AI server...</div>
-                    <p><strong>Generating AI summary and strategic recommendations...</strong></p>
-                `;
+                // Grab the HTML content of the main feeds area.
+                // We capture the parent of the first feed to get all the news cards.
+                const feedsContainer = document.getElementById('core-marketing-feed').parentElement;
+                const htmlContent = feedsContainer ? feedsContainer.outerHTML : ''; // Get the HTML of the entire dashboard content area
 
+                if (!htmlContent.includes('news-card')) {
+                     summaryDiv.innerHTML = `<p>Awaiting news articles to load, then initiating AI analysis...</p>`;
+                     return;
+                }
+
+                summaryDiv.innerHTML = `<p><strong>Generating AI summary and strategic recommendations...</strong></p>`;
+
+                // Call the secure server-side proxy endpoint
                 const response = await fetch('/api/summarize-news', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -697,45 +649,19 @@
                 });
 
                 const data = await response.json();
-                
+
                 if (response.status !== 200 || data.error) {
-                    // If the error message is the specific one, provide better context.
-                    if (data.error && data.error.includes("No clean news content found to summarize")) {
-                        summaryDiv.innerHTML = `<p style="color: var(--hide-color);">**Error: Server-side scraping failed.**<br>The server (using Cheerio) received the HTML but couldn't find any news cards (class \`.news-card\`). Check your server logs/deployment status.</p>`;
-                    } else {
-                        summaryDiv.innerHTML = `<p style="color: var(--hide-color);">Error generating summary: ${data.error || 'Unknown server error.'}</p>`;
-                    }
-                    
+                    summaryDiv.innerHTML = `<p style="color: var(--hide-color);">Error generating summary. Check Node.js console. (Server Status: ${response.status})</p>`;
                     console.error("AI Proxy Error:", data.error || 'Unknown server error.');
-                    
-                    // Display the explicit Gemini 503 error message if available
-                    if (data.error && data.error.includes("503")) {
-                       summaryDiv.innerHTML += `<p style="color: var(--hide-color);"><strong>MODEL OVERLOAD ERROR:</strong> The Gemini model is temporarily unavailable. Please try again in a few minutes by refreshing the page.</p>`;
-                    }
                     return;
                 }
 
-                // Display the summary (using the pre-wrap styling)
+                // Display the clean AI response.
+                // Using pre-wrap styling in CSS now handles the formatting.
                 summaryDiv.innerHTML = data.summary; 
-                
-                // Add the cache information at the top
-                const timestamp = new Date(data.timestamp);
-                const nextRefresh = new Date(timestamp.getTime() + (CACHE_TTL_HOURS * 60 * 60 * 1000));
-                const refreshTime = nextRefresh.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                const isCachedText = data.isCached ? ' (Source: Server Cache)' : ' (Source: New Analysis)';
-
-                const cacheHtml = `
-                    <div class="ai-cache-info">
-                        Last summarized: ${timestamp.toLocaleTimeString()} on ${timestamp.toLocaleDateString()}${isCachedText}.
-                        A new summary will be most helpful after **${refreshTime}**.
-                        <button onclick="clearSummaryCache()">Force New Analysis</button>
-                    </div>
-                `;
-                summaryDiv.insertAdjacentHTML('afterbegin', cacheHtml);
-
 
             } catch (e) {
-                summaryDiv.innerHTML = `<p style="color: var(--hide-color);">Could not connect to AI server. Ensure <code>node server.js</code> is running and accessible.</p>`;
+                summaryDiv.innerHTML = `<p style="color: var(--hide-color);">Could not connect to AI server. Ensure <code>node server.js</code> is running on port 3000.</p>`;
                 console.error("Frontend Fetch Error:", e);
             }
         }
@@ -747,12 +673,14 @@
         async function fetchAndRenderAllFeeds() {
             // Editorial Feeds
             const fetchEditorialPromises = EDITORIAL_FEEDS.map(feed => fetchAndRenderFeed(feed.url, feed.id, feed.source, false));
+            // Await the main editorial feeds to ensure content is present for the AI
             await Promise.all(fetchEditorialPromises);
             
-            // Trigger AI Summary after the main editorial feeds are loaded (delayed for stability)
-            setTimeout(generateAISummary, 1500); 
+            // IMPORTANT: Trigger AI Summary after the main editorial feeds are loaded
+            // We use a slight delay just to ensure the DOM has settled after all rendering.
+            setTimeout(generateAISummary, 500); 
 
-            // Reddit Feeds setup
+            // Reddit Feeds setup (can run in parallel or after summary trigger)
             const communityContainer = document.getElementById('community-pulse-container');
             let communityGridHTML = '';
             
@@ -778,17 +706,10 @@
             try {
                 const proxyUrl = `${RSS_TO_JSON_PROXY_BASE}${encodeURIComponent(feedUrl)}`;
                 const response = await fetch(proxyUrl);
-                
-                if (!response.ok) {
-                    // If the proxy itself fails (e.g., 500 status)
-                    throw new Error(`Proxy error: HTTP status ${response.status}`);
-                }
-
                 const data = await response.json();
 
-                if (data.status !== 'ok' || !data.items || data.items.length === 0) {
-                    // If the proxy returns data, but the feed is empty/bad
-                    throw new Error(`Feed error: Data status not 'ok' or no items found.`);
+                if (data.status !== 'ok' || !data.items) {
+                    throw new Error('Failed to fetch feed data or feed is empty.');
                 }
 
                 if (gridContainer.textContent.includes('Loading')) {
@@ -801,18 +722,11 @@
                         gridContainer.appendChild(card);
                     }
                 });
-                
-                // If the grid is still empty, display a success message just in case
-                if (gridContainer.children.length === 0) {
-                     gridContainer.innerHTML = `<p style="text-align: center; width: 100%; color: var(--secondary-text-color);">**${sourceName}** returned 0 recent items.</p>`;
-                }
 
             } catch (error) {
-                console.error(`🔴 FETCH ERROR for ${sourceName} (${feedUrl}):`, error.message);
-                
-                // Display an obvious error in the UI
+                console.error(`Error fetching or rendering feed for ${containerId} (${sourceName}):`, error);
                 if (gridContainer.textContent.includes('Loading')) {
-                    gridContainer.innerHTML = `<p style="color: var(--hide-color); text-align: center; width: 100%;">🔴 Error loading feed: ${sourceName} (${error.message})</p>`;
+                    gridContainer.innerHTML = `<p style="color: red; text-align: center; width: 100%;">Error loading feed: ${sourceName}</p>`;
                 }
             }
         }
@@ -845,7 +759,7 @@
                 cleanTitle = item.title.replace(/^(.*?):\s*/, '').trim();
             }
 
-            // CRITICAL: data- attributes for server scraping
+            // We must add data- attributes for the server to scrape successfully!
             card.setAttribute('data-search-title', cleanTitle.toLowerCase());
             card.setAttribute('data-search-desc', descriptionText.toLowerCase());
 
@@ -862,7 +776,7 @@
                 <div class="date-and-controls">
                     <p class="date">Published: ${pubDate}</p>
                     <div class="card-controls">
-                        <button onclick="hideTileForever(this, '${item.link}')">Hide</button>
+                        <button onclick="hideTileForever(this.closest('.news-card').querySelector('button'), '${item.link}')">Hide</button>
                     </div>
                 </div>
             `;
@@ -877,7 +791,7 @@
         loadViewPreference(); 
         loadThemePreference();
 
-        // 2. Setup controls (Theme toggle fix)
+        // 2. Setup controls
         setupControls();
 
         // 3. Fetch and render all defined feeds and trigger AI summary
