@@ -125,6 +125,9 @@
             border-radius: 4px;
             font-size: 0.9em;
             transition: background-color 0.2s, opacity 0.2s, border-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .control-button:hover {
@@ -180,13 +183,19 @@
             overflow: hidden;
         }
         
+        /* Note: Using max-height for smooth transition */
         .feed-section.hidden {
-            max-height: 0;
+            max-height: 0 !important; 
             opacity: 0;
             padding-top: 0;
             padding-bottom: 0;
             margin-top: 0;
             margin-bottom: 0;
+        }
+        
+        .feed-section.visible {
+             max-height: 5000px; /* Large enough value to show content */
+             opacity: 1;
         }
 
         .feed-section h2 {
@@ -375,6 +384,25 @@
             line-height: 1.6;
             white-space: pre-wrap; /* Ensures the AI's formatting (like newlines) is respected */
         }
+
+        /* AI Cache Info Styling */
+        .ai-cache-info {
+            font-size: 0.8em;
+            color: var(--secondary-text-color);
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .ai-cache-info button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 0.8em;
+        }
     </style>
 </head>
 <body class="light-mode">
@@ -395,18 +423,22 @@
                     <button id="list-view-button" class="view-button control-button" onclick="setListView('list')">List View</button>
                 </div>
                 
-                <button id="toggle-core-marketing" class="control-button active" data-target="core-marketing-feed">Core Marketing</button>
-                <button id="toggle-branding" class="control-button active" data-target="branding-advertising-feed">Branding & Campaigns</button>
-                <button id="toggle-adtech" class="control-button active" data-target="ad-tech-feed">Ad Technology</button>
-                <button id="toggle-fintech" class="control-button active" data-target="fintech-new-feed">Enterprise Tech</button>
-                <button id="toggle-tech" class="control-button active" data-target="tech-culture-feed">Tech & Culture</button>
-                <button id="toggle-community" class="control-button active" data-target="community-pulse-feed">Community Pulse</button>
+                <button id="toggle-ai-panel" class="control-button active" onclick="toggleSectionById('ai-insight-panel', this)">
+                    AI Panel: <span id="ai-panel-icon">👁️</span>
+                </button>
+                
+                <button id="toggle-core-marketing" class="control-button active" data-target="core-marketing-feed" onclick="toggleSectionByButton(this)">Core Marketing</button>
+                <button id="toggle-branding" class="control-button active" data-target="branding-advertising-feed" onclick="toggleSectionByButton(this)">Branding & Campaigns</button>
+                <button id="toggle-adtech" class="control-button active" data-target="ad-tech-feed" onclick="toggleSectionByButton(this)">Ad Technology</button>
+                <button id="toggle-fintech" class="control-button active" data-target="fintech-new-feed" onclick="toggleSectionByButton(this)">Enterprise Tech</button>
+                <button id="toggle-tech" class="control-button active" data-target="tech-culture-feed" onclick="toggleSectionByButton(this)">Tech & Culture</button>
+                <button id="toggle-community" class="control-button active" data-target="community-pulse-feed" onclick="toggleSectionByButton(this)">Community Pulse</button>
                 <button id="reset-hidden-button" class="control-button" onclick="resetHiddenTiles()">Reset Hidden Tiles</button>
             </div>
         </div>
     </header>
     
-    <div id="ai-insight-panel" class="feed-section">
+    <div id="ai-insight-panel" class="feed-section visible"> 
         <h2>✨ AI Strategy Summary</h2>
         <div id="ai-summary-content">
             <p>Awaiting news articles to load, then initiating AI analysis...</p>
@@ -414,42 +446,42 @@
     </div>
 
 
-    <div id="core-marketing-feed" class="feed-section">
+    <div id="core-marketing-feed" class="feed-section visible">
         <h2>📈 Core Marketing (Marketing Dive)</h2>
         <div class="news-grid-container" data-feed-id="core-marketing-feed">
             <div class="news-grid">Loading Core Marketing...</div>
         </div>
     </div>
 
-    <div id="branding-advertising-feed" class="feed-section">
+    <div id="branding-advertising-feed" class="feed-section visible">
         <h2>⭐️ Branding & Campaigns (Adweek, AdPulp, More...)</h2>
         <div class="news-grid-container" data-feed-id="branding-advertising-feed">
             <div class="news-grid">Loading Branding & Campaigns...</div>
         </div>
     </div>
 
-    <div id="ad-tech-feed" class="feed-section">
+    <div id="ad-tech-feed" class="feed-section visible">
         <h2>⚙️ Ad Technology (AdExchanger, VideoWeek...)</h2>
         <div class="news-grid-container" data-feed-id="ad-tech-feed">
             <div class="news-grid">Loading Ad Technology...</div>
         </div>
     </div>
 
-    <div id="fintech-new-feed" class="feed-section">
+    <div id="fintech-new-feed" class="feed-section visible">
         <h2>💰 Enterprise Tech & FinTech (CIO Dive, Banking Dive)</h2>
         <div class="news-grid-container" data-feed-id="fintech-new-feed">
             <div class="news-grid">Loading Enterprise Tech & FinTech...</div>
         </div>
     </div>
 
-    <div id="tech-culture-feed" class="feed-section">
+    <div id="tech-culture-feed" class="feed-section visible">
         <h2>🌐 Tech & Culture (Wired)</h2>
         <div class="news-grid-container" data-feed-id="tech-culture-feed">
             <div class="news-grid">Loading Tech & Culture...</div>
         </div>
     </div>
     
-    <div id="community-pulse-feed" class="feed-section">
+    <div id="community-pulse-feed" class="feed-section visible">
         <h2>🗣️ Community Pulse (Reddit Subreddits)</h2>
         <div id="community-pulse-container">
             </div>
@@ -457,7 +489,11 @@
     
     <script>
         /* --- JavaScript for Theme Switching, Fetching, Rendering, and Controls --- */
-
+        
+        const CACHE_TTL_HOURS = 4; // Must match server.js
+        const RSS_TO_JSON_PROXY_BASE = 'https://api.rss2json.com/v1/api.json?rss_url=';
+        let HIDDEN_LINKS = new Set();
+        
         const EDITORIAL_FEEDS = [
             { id: 'core-marketing-feed', url: 'https://www.marketingdive.com/feeds/news', source: 'Marketing Dive' },
             { id: 'branding-advertising-feed', url: 'https://www.adweek.com/feed/', source: 'Adweek' }, 
@@ -467,11 +503,8 @@
             { id: 'ad-tech-feed', url: 'https://adtechdaily.com/feed/', source: 'Ad Tech Daily' },
             { id: 'ad-tech-feed', url: 'https://videoweek.com/feed/', source: 'VideoWeek' },
             { id: 'ad-tech-feed', url: 'https://advertisemint.com/feed/', source: 'AdvertiseMint' },
-            
-            // --- UPDATED FINTECH SECTION: CIO Dive & Banking Dive ---
             { id: 'fintech-new-feed', url: 'https://www.ciodive.com/feed/', source: 'CIO Dive' },
             { id: 'fintech-new-feed', url: 'https://www.bankingdive.com/topic/fintech/feed/', source: 'Banking Dive' },
-            
             { id: 'tech-culture-feed', url: 'https://www.wired.com/feed/rss', source: 'Wired' }, 
         ];
         
@@ -482,10 +515,8 @@
             { id: 'r/fintech', url: 'https://www.reddit.com/r/Fintech.rss' },
             { id: 'r/userexperience', url: 'https://www.reddit.com/r/userexperience.rss' },
         ];
-        
-        const RSS_TO_JSON_PROXY_BASE = 'https://api.rss2json.com/v1/api.json?rss_url=';
-        let HIDDEN_LINKS = new Set();
-        
+
+
         // --- THEME LOGIC (Triple Mode) ---
         const THEMES = ['light-mode', 'dark-mode', 'midnight-mode'];
         const THEME_LABELS = {
@@ -541,7 +572,7 @@
             setListView(savedView);
         }
 
-        // --- PERSISTENCE & UTILITY LOGIC ---
+        // --- PERSISTENCE & UTILITY LOGIC (Hide/Reset) ---
         
         function loadHiddenLinks() {
             const storedLinks = localStorage.getItem('hiddenNewsLinks');
@@ -560,6 +591,8 @@
                 card.classList.add('hidden-tile');
                 HIDDEN_LINKS.add(link);
                 saveHiddenLinks();
+                // Since the visible content changed, clear the AI cache
+                clearSummaryCache(false); 
             }
         }
         
@@ -588,60 +621,85 @@
             });
         }
         
-        function toggleSection(button) {
+        /**
+         * Toggles the visibility of a feed section using the data-target attribute.
+         */
+        window.toggleSectionByButton = function(button) {
             const targetId = button.getAttribute('data-target');
+            toggleSectionById(targetId, button);
+        }
+
+        /**
+         * Toggles the visibility of any section by its ID.
+         */
+        window.toggleSectionById = function(targetId, button) {
             const section = document.getElementById(targetId);
 
             if (!section) return;
 
+            // Toggle visibility using classes for the transition
             if (section.classList.contains('hidden')) {
-                section.style.maxHeight = '5000px'; 
+                section.classList.add('visible');
                 section.classList.remove('hidden');
-                button.classList.add('active');
+                if (button) button.classList.add('active');
             } else {
                 section.classList.add('hidden');
-                button.classList.remove('active');
+                section.classList.remove('visible');
+                if (button) button.classList.remove('active');
+            }
+            
+            // Handle the AI Panel icon specially
+            if (targetId === 'ai-insight-panel') {
+                const icon = document.getElementById('ai-panel-icon');
+                if (section.classList.contains('hidden')) {
+                    icon.textContent = '❌'; // Hidden icon
+                } else {
+                    icon.textContent = '👁️'; // Visible icon
+                }
             }
         }
 
-        function setupControls() {
-            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
-            
-            const filterButtons = document.querySelectorAll('.controls-row .control-button[data-target]');
-            filterButtons.forEach(button => {
-                button.removeEventListener('click', toggleSection); 
-                button.addEventListener('click', () => {
-                    toggleSection(button);
-                });
-            });
-        }
 
         // --- AI SUMMARY INTEGRATION FUNCTION (Calls Server) ---
+        
+        function clearSummaryCache(shouldReload = true) {
+            // Note: In a production app, this would be an API call to DELETE the cache file on the server.
+            // For this setup, we rely on a page reload to force the server to run the uncached logic.
+            
+            const summaryDiv = document.getElementById('ai-summary-content');
+            summaryDiv.innerHTML = `
+                <div class="ai-cache-info">Clearing server cache and forcing new analysis. Please wait ~90 seconds...</div>
+                <p>Reloading page...</p>
+            `;
+            
+            if (shouldReload) {
+                window.location.reload(true); 
+            }
+        }
+        
         async function generateAISummary() {
             const summaryDiv = document.getElementById('ai-summary-content');
             
-            // SECURITY CHECK: Must be run on http://localhost:3000, not file://
             if (window.location.protocol === 'file:') {
                  summaryDiv.innerHTML = `<p><strong>Note:</strong> To use the AI Strategy Summary, you MUST run this file 
-                 via your secure Node.js server (e.g., <code>http://localhost:3000</code>). 
-                 The API endpoint is not accessible from a local <code>file://</code> URL.</p>`;
+                 via your secure Node.js server. The API endpoint is not accessible from a local <code>file://</code> URL.</p>`;
                  return;
             }
 
             try {
-                // Grab the HTML content of the main feeds area.
-                // We capture the parent of the first feed to get all the news cards.
                 const feedsContainer = document.getElementById('core-marketing-feed').parentElement;
-                const htmlContent = feedsContainer ? feedsContainer.outerHTML : ''; // Get the HTML of the entire dashboard content area
+                const htmlContent = feedsContainer ? feedsContainer.outerHTML : ''; 
 
                 if (!htmlContent.includes('news-card')) {
                      summaryDiv.innerHTML = `<p>Awaiting news articles to load, then initiating AI analysis...</p>`;
                      return;
                 }
 
-                summaryDiv.innerHTML = `<p><strong>Generating AI summary and strategic recommendations...</strong></p>`;
+                summaryDiv.innerHTML = `
+                    <div class="ai-cache-info">Contacting AI server...</div>
+                    <p><strong>Generating AI summary and strategic recommendations...</strong></p>
+                `;
 
-                // Call the secure server-side proxy endpoint
                 const response = await fetch('/api/summarize-news', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -649,19 +707,40 @@
                 });
 
                 const data = await response.json();
-
+                const cacheInfoDiv = summaryDiv.querySelector('.ai-cache-info');
+                
                 if (response.status !== 200 || data.error) {
-                    summaryDiv.innerHTML = `<p style="color: var(--hide-color);">Error generating summary. Check Node.js console. (Server Status: ${response.status})</p>`;
+                    summaryDiv.innerHTML = `<p style="color: var(--hide-color);">Error generating summary: ${data.error || 'Unknown server error.'}</p>`;
                     console.error("AI Proxy Error:", data.error || 'Unknown server error.');
+                    
+                    // Display the explicit Gemini 503 error message if available
+                    if (data.error && data.error.includes("503")) {
+                       summaryDiv.innerHTML += `<p style="color: var(--hide-color);"><strong>MODEL OVERLOAD ERROR:</strong> The Gemini model is temporarily unavailable. Please try again in a few minutes.</p>`;
+                    }
                     return;
                 }
 
-                // Display the clean AI response.
-                // Using pre-wrap styling in CSS now handles the formatting.
+                // Display the summary (using the pre-wrap styling)
                 summaryDiv.innerHTML = data.summary; 
+                
+                // Add the cache information at the top
+                const timestamp = new Date(data.timestamp);
+                const nextRefresh = new Date(timestamp.getTime() + (CACHE_TTL_HOURS * 60 * 60 * 1000));
+                const refreshTime = nextRefresh.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                const isCachedText = data.isCached ? ' (Source: Server Cache)' : ' (Source: New Analysis)';
+
+                const cacheHtml = `
+                    <div class="ai-cache-info">
+                        Last summarized: ${timestamp.toLocaleTimeString()} on ${timestamp.toLocaleDateString()}${isCachedText}.
+                        A new summary will be most helpful after **${refreshTime}**.
+                        <button onclick="clearSummaryCache()">Force New Analysis</button>
+                    </div>
+                `;
+                summaryDiv.insertAdjacentHTML('afterbegin', cacheHtml);
+
 
             } catch (e) {
-                summaryDiv.innerHTML = `<p style="color: var(--hide-color);">Could not connect to AI server. Ensure <code>node server.js</code> is running on port 3000.</p>`;
+                summaryDiv.innerHTML = `<p style="color: var(--hide-color);">Could not connect to AI server. Ensure <code>node server.js</code> is running.</p>`;
                 console.error("Frontend Fetch Error:", e);
             }
         }
@@ -673,14 +752,12 @@
         async function fetchAndRenderAllFeeds() {
             // Editorial Feeds
             const fetchEditorialPromises = EDITORIAL_FEEDS.map(feed => fetchAndRenderFeed(feed.url, feed.id, feed.source, false));
-            // Await the main editorial feeds to ensure content is present for the AI
             await Promise.all(fetchEditorialPromises);
             
-            // IMPORTANT: Trigger AI Summary after the main editorial feeds are loaded
-            // We use a slight delay just to ensure the DOM has settled after all rendering.
+            // Trigger AI Summary after the main editorial feeds are loaded
             setTimeout(generateAISummary, 500); 
 
-            // Reddit Feeds setup (can run in parallel or after summary trigger)
+            // Reddit Feeds setup
             const communityContainer = document.getElementById('community-pulse-container');
             let communityGridHTML = '';
             
@@ -759,8 +836,7 @@
                 cleanTitle = item.title.replace(/^(.*?):\s*/, '').trim();
             }
 
-            // We must add data- attributes for the server to scrape successfully!
-            // This is CRITICAL for the server's Cheerio pre-processing logic to find the text.
+            // CRITICAL: data- attributes for server scraping
             card.setAttribute('data-search-title', cleanTitle.toLowerCase());
             card.setAttribute('data-search-desc', descriptionText.toLowerCase());
 
@@ -777,7 +853,7 @@
                 <div class="date-and-controls">
                     <p class="date">Published: ${pubDate}</p>
                     <div class="card-controls">
-                        <button onclick="hideTileForever(this.closest('.news-card').querySelector('button'), '${item.link}')">Hide</button>
+                        <button onclick="hideTileForever(this, '${item.link}')">Hide</button>
                     </div>
                 </div>
             `;
@@ -792,10 +868,11 @@
         loadViewPreference(); 
         loadThemePreference();
 
-        // 2. Setup controls
-        setupControls();
+        // 2. Setup controls (listeners are set via inline handlers in HTML now for simplicity)
 
-        // 3. Fetch and render all defined feeds and trigger AI summary
+        // 3. Set initial visibility state for sections (based on classes in HTML)
+        
+        // 4. Fetch and render all defined feeds and trigger AI summary
         fetchAndRenderAllFeeds();
     </script>
 </body>
