@@ -659,6 +659,14 @@
             }
         }
 
+        function setupControls() {
+            // FIX: Re-add the event listener for the theme toggle button
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            
+            // No need to set up filter buttons here as they use inline onclick handlers now,
+            // but this function ensures theme toggle works correctly.
+        }
+
 
         // --- AI SUMMARY INTEGRATION FUNCTION (Calls Server) ---
         
@@ -689,9 +697,10 @@
             try {
                 const feedsContainer = document.getElementById('core-marketing-feed').parentElement;
                 const htmlContent = feedsContainer ? feedsContainer.outerHTML : ''; 
-
+                
+                // CRITICAL CHECK for 'No clean news content found to summarize.'
                 if (!htmlContent.includes('news-card')) {
-                     summaryDiv.innerHTML = `<p>Awaiting news articles to load, then initiating AI analysis...</p>`;
+                     summaryDiv.innerHTML = `<p style="color: var(--hide-color);">**Error: No clean news content found to summarize.**<br>Feeds may still be loading, or RSS sources may be temporarily unavailable. Please wait a moment or check the console for RSS errors.</p>`;
                      return;
                 }
 
@@ -715,7 +724,7 @@
                     
                     // Display the explicit Gemini 503 error message if available
                     if (data.error && data.error.includes("503")) {
-                       summaryDiv.innerHTML += `<p style="color: var(--hide-color);"><strong>MODEL OVERLOAD ERROR:</strong> The Gemini model is temporarily unavailable. Please try again in a few minutes.</p>`;
+                       summaryDiv.innerHTML += `<p style="color: var(--hide-color);"><strong>MODEL OVERLOAD ERROR:</strong> The Gemini model is temporarily unavailable. Please try again in a few minutes by refreshing the page.</p>`;
                     }
                     return;
                 }
@@ -868,11 +877,10 @@
         loadViewPreference(); 
         loadThemePreference();
 
-        // 2. Setup controls (listeners are set via inline handlers in HTML now for simplicity)
+        // 2. Setup controls (Theme toggle fix)
+        setupControls();
 
-        // 3. Set initial visibility state for sections (based on classes in HTML)
-        
-        // 4. Fetch and render all defined feeds and trigger AI summary
+        // 3. Fetch and render all defined feeds and trigger AI summary
         fetchAndRenderAllFeeds();
     </script>
 </body>
